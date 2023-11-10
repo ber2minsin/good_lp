@@ -1,6 +1,7 @@
 //! Constraints define the inequalities that must hold in the solution.
 use crate::expression::Expression;
 use crate::variable::{FormatWithVars, Variable};
+use crate::IntoAffineExpression;
 use core::fmt::{Debug, Formatter};
 use std::ops::{Shl, Shr, Sub};
 
@@ -22,6 +23,13 @@ impl Constraint {
     }
 }
 
+impl From<Expression> for Constraint {
+    fn from(value: Expression) -> Self {
+        let expr_formatted = format!("{:#?}", value);
+        let new_constraint = Constraint::new(value, expr_formatted.find("==").is_some());
+        new_constraint
+    }
+}
 impl FormatWithVars for Constraint {
     fn format_with<FUN>(&self, f: &mut Formatter<'_>, variable_format: FUN) -> std::fmt::Result
     where
